@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Towers of Hanoi</title>
+
+
+	<style>
+		@import url('https://fonts.googleapis.com/css?family=Kirang+Haerang');
+
+		body {
+			background: #00c6ff;
+			background: -webkit-linear-gradient(to right, #00c6ff, #0072ff);
+			background: linear-gradient(to left, #00c6ff, #0072ff);
+		}
+
+		h1,
+		p {
+			font-family: 'Kirang Haerang', cursive;
+			color: white;
+		}
+
+		#reset {
+			height: 30%;
+			width: 20%;
+
+			border-style: solid;
+			border-color: white;
+			border-radius: 15px;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			font-size: 150%;
+		}
+
+		#reset:hover {
+			cursor: pointer;
+		}
+
+		#rewind:hover {
+			cursor: pointer;
+		}
+
+		#rewind {
+
+			height: 30%;
+			width: 20%;
+
+			border-style: solid;
+			border-color: white;
+			border-radius: 15px;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			font-size: 150%;
+		}
+
+		#reset-container {
+			margin: 0 auto;
+
+			height: 200px;
+			width: 800px;
+
+			border-color: white;
+
+			display: flex;
+			flex-direction: row;
+			justify-content: space-evenly;
+			align-items: center;
+
+			position: relative;
+			top: 100px;
+		}
+
+		#playGround {
+			margin: 0 auto;
+
+			height: 60vh;
+			width: 83vw;
+
+			border-color: white;
+
+			display: flex;
+			flex-direction: column;
+			justify-content: space-evenly;
+			align-items: center;
+
+			position: relative;
+			top: 50px;
+
+			border-style: solid;
+			border-color: white;
+			border-radius: 15px;
+		}
+
+		.stick {
+			height: 65%;
+			width: 3%;
+
+			background-color: white;
+
+			border-radius: 25% 25% 0 0;
+
+			position: relative;
+			top: 5%;
+
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-end;
+
+			overflow: visible;
+
+			z-index: 5;
+		}
+
+		.ground {
+			height: 100%;
+			width: 33.33%;
+
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		#racks {
+			margin: 0 auto;
+			height: 400px;
+			width: 800px;
+
+			border-color: white;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			position: relative;
+			top: 145px;
+		}
+
+
+
+
+		/*****************Disks*****************/
+
+
+
+
+
+		.disk {
+
+			border-radius: 15px;
+
+			height: 10%;
+
+			margin: 0;
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			overflow: hidden;
+
+			position: relative;
+		}
+
+		.disk-filling {
+			height: 120%;
+			width: 75%;
+
+			border-radius: 100%;
+		}
+
+		.disk-fillingL {
+			position: relative;
+			left: 5px;
+		}
+
+		.disk-fillingR {
+			position: relative;
+			right: 5px;
+		}
+
+		#disk1 {
+			width: 800%;
+			background-color: rgba(160, 0, 0, .9);
+		}
+
+		#disk2 {
+			width: 1000%;
+			background-color: rgba(160, 160, 0, .9);
+		}
+
+		#disk3 {
+			width: 1200%;
+			background-color: rgb(105, 173, 38, .9);
+			position: relative;
+		}
+
+		#disk4 {
+			width: 1400%;
+			background-color: rgb(3, 75, 183, .9);
+		}
+
+		.disk-filling1 {
+			background-color: rgba(255, 0, 0, .9);
+		}
+
+		.disk-filling2 {
+			background-color: rgba(255, 255, 0, .9);
+		}
+
+		.disk-filling3 {
+			background-color: rgba(153, 255, 51, .9);
+		}
+
+		.disk-filling4 {
+			background-color: rgba(0, 102, 255, .9);
+		}
+		audio { 
+			display:none;
+		}
+
+	</style>
+
+
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+
+	<script>
+		var level = 4;
+		var clicked = false;
+		var prev = "";
+		var count = 0;
+		var last = "";
+		var c = 0;
+		var instants = [[]];
+
+		$(document).ready(function() {
+
+			var t = document.querySelectorAll('.ground');
+
+			for (i = 0; i < t.length; i++) {
+				t[i].addEventListener('click', function() {
+					if (!clicked) {
+						clicked = true;
+						$(this).find('div>div:first').css({
+							'position': 'absolute',
+							'bottom': '300px'
+						});
+						prev = $(this);
+						instants[c].push(prev);
+						
+						
+					} else {
+						var diskIdMehzouz = 10000000000;
+						var diskIdMe7tout = 10000000000;
+
+						if ($(this).find('div>div:first').length) {
+							diskIdMe7tout = $(this).find('div>div:first').attr('id').substr(4, 5);
+						}
+
+						if ($(prev).find('div>div:first').length) {
+							diskIdMehzouz = prev.find('div>div:first').attr('id').substr(4, 5);
+						}
+
+						if (diskIdMehzouz <= diskIdMe7tout) {
+							$(this).find('div:first').prepend(prev.find('div>div:first'));
+							$(this).find('div>div:first').css({
+								'position': 'relative',
+								'bottom': ''
+							});
+							last = $(this);
+							instants[c].push(last);
+							instants.push([]);
+							clicked = false;
+							c++;
+							$('#display').html('Moves: ' + ++count);
+							
+						}
+					}
+				});
+			}
+
+			$(document).click(function() {
+				if ($('#ground2').find('.stick').children().length == level || $('#ground3').find('.stick').children().length == level) {
+					alert("Congratulations !!! You won in " + count + ' moves');
+					window.location.reload();
+				}
+			});
+		});
+
+		var rollBack = function() {
+			if (instants.length>1) {
+			instants[instants.length-2][0].find('div:first').prepend(instants[instants.length-2][1].find('div>div:first'));
+			instants.splice(instants.length - 1, 1);
+				$('#display').html('Moves: ' + --count);
+				c--;
+			}
+		}
+
+	</script>
+
+</head>
+
+<body>
+
+	<audio controls autoplay loop>
+		<source src="Sneaky Snitch (Kevin MacLeod) - Gaming Background Music (HD).mp3" type="audio/mp3" autoplay="true" loop>
+	</audio>
+
+	<div id="container">
+	
+		<h1 id="display">Moves: 0</h1>
+
+		<section id="playGround">
+
+
+
+			<section id="racks">
+
+				<section class="ground" id="ground1">
+					<div class="stick">
+						<div class="disk" id="disk1">
+							<div class="disk-filling disk-filling1 disk-fillingL"></div>
+							<div class="disk-filling disk-filling1 disk-fillingR"></div>
+						</div>
+						<div class="disk" id="disk2">
+							<div class="disk-filling disk-filling2 disk-fillingL"></div>
+							<div class="disk-filling disk-filling2 disk-fillingR"></div>
+						</div>
+						<div class="disk" id="disk3">
+							<div class="disk-filling disk-filling3 disk-fillingL"></div>
+							<div class="disk-filling disk-filling3 disk-fillingR"></div>
+						</div>
+						<div class="disk" id="disk4" y>
+							<div class="disk-filling disk-filling4 disk-fillingL"></div>
+							<div class="disk-filling disk-filling4 disk-fillingR"></div>
+						</div>
+					</div>
+				</section>
+
+				<section class="ground" id="ground2">
+					<div class="stick"></div>
+				</section>
+
+				<section class="ground" id="ground3">
+					<div class="stick">
+					</div>
+				</section>
+
+			</section>
+
+		</section>
+
+		<section id="reset-container">
+			<div id="reset" onclick="window.location.reload()">
+				<p id="reset-text">Reset</p>
+			</div>
+			<div id="rewind">
+				<p id="rewind-text" onclick="rollBack()">Rewind</p>
+			</div>
+		</section>
+	</div>
+
+
+
+	<script src="js/index.js"></script>
+
+</body>
+
+</html>
